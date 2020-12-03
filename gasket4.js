@@ -9,10 +9,11 @@ var axis = 0;
 var xAxis = 0;
 var yAxis = 1;
 var zAxis = 2;
-var theta = [0, 0, 0];
 var thetaLoc;
 var check = true;
 var NumTimesToSubdivide = 3;
+
+let modelViewMatrixLoc;
 
 window.onload = function init() {
   canvas = document.getElementById("gl-canvas");
@@ -79,6 +80,8 @@ window.onload = function init() {
   gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vPosition);
 
+  modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
+
   render();
 };
 
@@ -139,6 +142,19 @@ function divideTetra(a, b, c, d, count) {
 function render() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+  let scaleFactor = mat4(
+    scaleX, 0, 0, 0,
+    0, scaleY, 0, 0,
+    0, 0, scaleZ, 0,
+    0, 0, 0, scaleW
+  );
+
+  let modelViewMatrix = rotate(theta, ...rotationAxis);
+  modelViewMatrix = mult(modelViewMatrix, scaleFactor);
+  modelViewMatrix = mult(modelViewMatrix, translate(translateX, translateY, translateZ));
+
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+
   // theta[yAxis] += 2.0;
   // gl.uniform3fv(thetaLoc, theta);
 
@@ -151,3 +167,66 @@ function render() {
   gl.drawArrays(gl.TRIANGLES, 0, points.length);
   requestAnimFrame(render);
 }
+
+let translateX = 0;
+let translateY = 0;
+let translateZ = 0;
+
+let theta = 0;
+let rotationAxis = [0, 0, 1];
+let rotationInterval = 10;
+let rotationIntervalId;
+
+let scaleX = 1;
+let scaleY = 1;
+let scaleZ = 1;
+let scaleW = 1;
+
+window.addEventListener("load", () => {
+  let rotations = [
+    {
+      id: "rotate-x",
+      axis: 0
+    }, {
+      id: "rotate-y",
+      axis: 1
+    }, {
+      id: "rotate-z",
+      axis: 2
+    }
+  ];
+
+  for (let rotation of rotations) {
+    let element = document.getElementById(rotation.id);
+    element.addEventListener("click", () => {
+      clearInterval(rotationIntervalId);
+
+      rotationIntervalId = setInterval(() => {
+        rotationAxis = [0, 0, 0];
+        rotationAxis[rotation.axis] = 1;
+
+        theta += 1;
+      }, rotationInterval);
+    });
+  }
+
+  let element = document.getElementById("scale");
+  element.addEventListener("click", () => {
+    let minFactor = 0.5;
+    let maxFactor = 1.5;
+
+    let scaleDirection = 1;
+
+    setInterval(() => {
+      scaleX = scaleX + (scaleDirection * 0.01);
+      scaleY = scaleY + (scaleDirection * 0.01);
+
+      if (
+        Math.abs(scaleX - minFactor) < 0.01 ||
+        Math.abs(scaleX - maxFactor) < 0.01
+      ) {
+        scaleDirection *= -1;
+      }
+    }, 10)
+  })
+});

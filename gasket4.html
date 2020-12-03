@@ -10,10 +10,12 @@
       attribute vec3 vColor;
       varying vec4 color;
 
+      uniform mat4 modelViewMatrix;
+
       void
       main()
       {
-          gl_Position = vec4(vPosition, 1.0);
+          gl_Position = modelViewMatrix * vec4(vPosition, 1.0);
 
 
           color = vec4(vColor, 1.0);
@@ -46,7 +48,12 @@
             Oops ... your browser doesn't support the HTML5 canvas element
           </canvas>
         </div>
-        <div class="row"><button>Start Now</button></div>
+        <div class="row">
+          <button id="rotate-x">Rotate X</button>
+          <button id="rotate-y">Rotate Y</button>
+          <button id="rotate-z">Rotate Z</button>
+          <button id="scale">Scale</button>
+        </div>
       </div>
     </div>
   </body>
