@@ -28,7 +28,7 @@ function init() {
     vec3(0.0, 0.0, -1.0),
     vec3(0.0, 0.9428, 0.3333),
     vec3(-0.8165, -0.4714, 0.3333),
-    vec3(0.8165, -0.4714, 0.3333)
+    vec3(0.8165, -0.4714, 0.3333),
   ];
 
   divideTetra(
@@ -75,8 +75,7 @@ function init() {
 
   modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
 
-  let subdivisionsInput = document.getElementById("subdivisions");
-  subdivisionsInput.addEventListener("input", () => {
+  const recalculateTriangle = () => {
     points = [];
     colors = [];
 
@@ -92,7 +91,26 @@ function init() {
     gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
-  });
+  };
+
+  const inputs = [
+    "subdivisions",
+    "colour-background-rgb",
+    "colour-background-a",
+    "colour-face-1-rgb",
+    "colour-face-1-a",
+    "colour-face-2-rgb",
+    "colour-face-2-a",
+    "colour-face-3-rgb",
+    "colour-face-3-a",
+    "colour-face-4-rgb",
+    "colour-face-4-a",
+  ];
+
+  for (const input of inputs) {
+    const element = document.getElementById(input);
+    element.addEventListener("input", recalculateTriangle);
+  }
 
   render();
 }
@@ -100,12 +118,28 @@ function init() {
 function triangle(a, b, c, color) {
   // add colors and vertices for one triangle
 
-  var baseColors = [
-    vec3(1.0, 0.0, 0.0),
-    vec3(0.0, 1.0, 0.0),
-    vec3(0.0, 0.0, 1.0),
-    vec3(0.0, 0.0, 0.0)
-  ];
+  // var baseColors = [
+  //   vec3(1.0, 0.0, 0.0),
+  //   vec3(0.0, 1.0, 0.0),
+  //   vec3(0.0, 0.0, 1.0),
+  //   vec3(0.0, 0.0, 0.0),
+  // ];
+  let baseColors = [];
+
+  const { colour_solid: colours } = configurations;
+  const faces = ["face_1", "face_2", "face_3", "face_4"];
+
+  for (const face of faces) {
+    const hex = colours[face][0];
+
+    const RGB = [
+      Number.parseInt(hex.slice(1, 3), 16) / 255,
+      Number.parseInt(hex.slice(3, 5), 16) / 255,
+      Number.parseInt(hex.slice(5, 7), 16) / 255,
+    ];
+
+    baseColors.push(vec3(...RGB));
+  }
 
   colors.push(baseColors[color]);
   points.push(a);
@@ -173,6 +207,7 @@ function render() {
     z: translateZ,
   } = config.translation_magnitude;
 
+  // prettier-ignore
   let scaleFactor = mat4(
     scaleX, 0, 0, 0,
     0, scaleY, 0, 0,
