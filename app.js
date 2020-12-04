@@ -183,7 +183,7 @@ function animate() {
 
     if (theta.x == minTheta.x || theta.x == maxTheta.x) {
       rotateDirection.x *= -1;
-      rotationCheckpoint.x += 1
+      rotationCheckpoint.x += 1;
     }
 
     if (theta.y == minTheta.y || theta.y == maxTheta.y) {
@@ -207,31 +207,97 @@ function animate() {
     }
   }, 10);
 
-  // let minFactor = 0.5;
-  // let maxFactor = 1.5;
+  const { scaling_factor: factor } = animationData;
 
-  // let scaleDirection = 1;
+  const initialFactor = 1;
 
-  // let scalingInterval = setInterval(() => {
-  //   if (!completeness.rotation) {
-  //     return;
-  //   }
+  // prettier-ignore
+  let minFactor = {
+    x: factor.x < initialFactor ? factor.x : initialFactor - (factor.x - initialFactor),
+    y: factor.y < initialFactor ? factor.y : initialFactor - (factor.y - initialFactor),
+    z: factor.z < initialFactor ? factor.z : initialFactor - (factor.z - initialFactor),
+  }
 
-  //   if (completeness.scaling) {
-  //     clearInterval(scalingInterval);
-  //     return;
-  //   }
+  // prettier-ignore
+  let maxFactor = {
+    x: factor.x > initialFactor ? factor.x : initialFactor + (initialFactor - factor.x),
+    y: factor.y > initialFactor ? factor.y : initialFactor + (initialFactor - factor.y),
+    z: factor.z > initialFactor ? factor.z : initialFactor + (initialFactor - factor.z),
+  };
 
-  //   config.scaling_factor.x += scaleDirection * 0.01;
-  //   config.scaling_factor.y += scaleDirection * 0.01;
+  let scaleDirection = {
+    x: factor.x < initialFactor ? -1 : 1,
+    y: factor.y < initialFactor ? -1 : 1,
+    z: factor.z < initialFactor ? -1 : 1,
+  };
 
-  //   if (
-  //     Math.abs(scaleX - minFactor) < 0.01 ||
-  //     Math.abs(scaleX - maxFactor) < 0.01
-  //   ) {
-  //     scaleDirection *= -1;
-  //   }
-  // }, 10);
+  let scaleCheckpoint = {
+    x: 0,
+    y: 0,
+    z: 0,
+  };
+
+  factor.x = initialFactor;
+  factor.y = initialFactor;
+  factor.z = initialFactor;
+
+  let scalingInterval = setInterval(() => {
+    if (!completeness.rotation) {
+      return;
+    }
+
+    if (completeness.scaling) {
+      clearInterval(scalingInterval);
+      return;
+    }
+
+    if (scaleCheckpoint.x < 4) {
+      factor.x += scaleDirection.x * 0.01;
+    }
+
+    if (scaleCheckpoint.y < 4) {
+      factor.y += scaleDirection.y * 0.01;
+    }
+
+    if (scaleCheckpoint.z < 4) {
+      factor.z += scaleDirection.z * 0.01;
+    }
+
+    if (Math.abs(factor.x - initialFactor) < 0.01) {
+      scaleCheckpoint.x += 1;
+    }
+
+    if (Math.abs(factor.y - initialFactor) < 0.01) {
+      scaleCheckpoint.y += 1;
+    }
+
+    if (Math.abs(factor.z - initialFactor) < 0.01) {
+      scaleCheckpoint.z += 1;
+    }
+
+    if (factor.x - minFactor.x < 0.01 || maxFactor.x - factor.x < 0.01) {
+      scaleDirection.x *= -1;
+      scaleCheckpoint.x += 1;
+    }
+
+    if (factor.y - minFactor.y < 0.01 || maxFactor.y - factor.y < 0.01) {
+      scaleDirection.y *= -1;
+      scaleCheckpoint.y += 1;
+    }
+
+    if (factor.z - minFactor.z < 0.001 || maxFactor.z - factor.z < 0.001) {
+      scaleDirection.z *= -1;
+      scaleCheckpoint.z += 1;
+    }
+
+    if (
+      scaleCheckpoint.x >= 4 &&
+      scaleCheckpoint.y >= 4 &&
+      scaleCheckpoint.z >= 4
+    ) {
+      completeness.scaling = true;
+    }
+  }, 10);
 }
 
 window.addEventListener("load", () => {
