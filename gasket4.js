@@ -75,6 +75,14 @@ function init() {
   modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
 
   const recalculateTriangle = () => {
+    let config = {};
+
+    if (animation) {
+      config = animationData;
+    } else {
+      config = configurations;
+    }
+
     points = [];
     colors = [];
 
@@ -83,7 +91,7 @@ function init() {
       vertices[1],
       vertices[2],
       vertices[3],
-      configurations.subdivisions
+      config.subdivisions
     );
 
     gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
@@ -104,6 +112,13 @@ function init() {
     "colour-face-4-a",
   ];
 
+  for (const input of inputs) {
+    const element = document.getElementById(input);
+    element.addEventListener("input", recalculateTriangle);
+  }
+
+  document.addEventListener("subdivision", recalculateTriangle);
+
   const recalculateBackgroundColour = () => {
     const { colour_solid: colours } = configurations;
 
@@ -121,11 +136,6 @@ function init() {
   };
 
   recalculateBackgroundColour();
-
-  for (const input of inputs) {
-    const element = document.getElementById(input);
-    element.addEventListener("input", recalculateTriangle);
-  }
 
   const backgroundInputs = ["colour-background-rgb", "colour-background-a"];
   for (const input of backgroundInputs) {

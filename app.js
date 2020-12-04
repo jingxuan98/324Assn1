@@ -14,7 +14,7 @@ let configurations = {
     face_4: [],
   },
   iterations: 10,
-  speed: "normal",
+  speed: "fast",
   rotation_axis: "x",
   rotation_angle: {
     x: 0,
@@ -71,7 +71,7 @@ const handleColourInput = (opts) => {
   alphaInput.addEventListener("input", () => {
     colours[opts.colourKey][1] = Number.parseFloat(alphaInput.value);
     valueDisplay.innerHTML = alphaInput.value;
-  })
+  });
 };
 
 const handleIterationsInput = () => {
@@ -136,6 +136,7 @@ function animate() {
   animationData = JSON.parse(JSON.stringify(configurations));
 
   let completeness = {
+    subdivision: false,
     rotation: false,
     scaling: false,
     translation: false,
@@ -148,6 +149,41 @@ function animate() {
     slow: 15,
     very_slow: 20,
   };
+
+  let subdivisionEvent = new CustomEvent("subdivision");
+
+  let minSubdivisions = 0;
+  let maxSubdivisions = animationData.subdivisions;
+
+  let subdivisionDirection = 1;
+  let subdivisionCheckpoint = 0;
+
+  animationData.subdivisions = minSubdivisions;
+  document.dispatchEvent(subdivisionEvent);
+
+  let subdivisionInterval = setInterval(() => {
+    if (completeness.subdivision) {
+      clearInterval(subdivisionInterval);
+      return;
+    }
+
+    if (subdivisionCheckpoint < 3) {
+      animationData.subdivisions += subdivisionDirection;
+      document.dispatchEvent(subdivisionEvent);
+    }
+
+    if (
+      animationData.subdivisions == minSubdivisions ||
+      animationData.subdivisions == maxSubdivisions
+    ) {
+      subdivisionDirection *= -1;
+      subdivisionCheckpoint += 1;
+    }
+
+    if (subdivisionCheckpoint == 3) {
+      completeness.subdivision = true;
+    }
+  }, speed[animationData.speed] * 50);
 
   const { rotation_angle: theta } = animationData;
 
@@ -180,6 +216,10 @@ function animate() {
   theta.z = 0;
 
   let rotationInterval = setInterval(() => {
+    if (!completeness.subdivision) {
+      return;
+    }
+
     if (completeness.rotation) {
       clearInterval(rotationInterval);
       return;
@@ -272,7 +312,7 @@ function animate() {
   factor.z = initialFactor;
 
   let scalingInterval = setInterval(() => {
-    if (!completeness.rotation) {
+    if (!completeness.subdivision || !completeness.rotation) {
       return;
     }
 
@@ -360,7 +400,11 @@ function animate() {
   translation.z = 0;
 
   let translationInterval = setInterval(() => {
-    if (!completeness.rotation || !completeness.scaling) {
+    if (
+      !completeness.subdivision ||
+      !completeness.rotation ||
+      !completeness.scaling
+    ) {
       return;
     }
 
@@ -435,6 +479,7 @@ function animate() {
     }
 
     if (
+      completeness.subdivision &&
       completeness.rotation &&
       completeness.scaling &&
       completeness.translation
