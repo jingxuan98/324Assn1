@@ -163,7 +163,7 @@ function render() {
   }
 
   const { x: scaleX, y: scaleY, z: scaleZ } = config.scaling_factor;
-  const scaleW = 1;
+  const scaleW = 2.5;
 
   const theta = config.rotation_angle;
 
