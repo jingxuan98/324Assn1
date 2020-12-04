@@ -1,10 +1,11 @@
 let configurations = {
   subdivisions: 1,
   colour_solid: {
-    face_1: 0,
-    face_2: 0,
-    face_3: 0,
-    face_4: 0,
+    background: ["#ffffff", 1],
+    face_1: ["#ff0000", 1],
+    face_2: ["#00ff00", 1],
+    face_3: ["#0000ff", 1],
+    face_4: ["#000000", 1],
   },
   colour_gradient: {
     face_1: [],
@@ -12,7 +13,6 @@ let configurations = {
     face_3: [],
     face_4: [],
   },
-  background_colour: 0,
   iterations: 10,
   speed: "normal",
   rotation_axis: "x",
@@ -50,6 +50,28 @@ const handleSubdivisionsInput = () => {
     configurations.subdivisions = Number.parseInt(subdivisionsInput.value);
     subdivisionsValue.innerHTML = subdivisionsInput.value;
   });
+};
+
+const handleColourInput = (opts) => {
+  let input = document.getElementById(opts.inputId);
+  let alphaInput = document.getElementById(opts.alphaInputId);
+  let valueDisplay = document.getElementById(opts.valueId);
+
+  let { colour_solid: colours } = configurations;
+
+  input.value = colours[opts.colourKey][0];
+
+  input.addEventListener("input", () => {
+    configurations.colour_solid[opts.colourKey][0] = input.value;
+  });
+
+  alphaInput.value = colours[opts.colourKey][1];
+  valueDisplay.innerHTML = alphaInput.value;
+
+  alphaInput.addEventListener("input", () => {
+    colours[opts.colourKey][1] = Number.parseFloat(alphaInput.value);
+    valueDisplay.innerHTML = alphaInput.value;
+  })
 };
 
 const handleIterationsInput = () => {
@@ -442,7 +464,7 @@ window.addEventListener("load", () => {
   handleIterationsInput();
   handleSpeedInput();
 
-  let opts = [
+  let transformElements = [
     {
       inputId: "rotation",
       valueId: "rotation-value",
@@ -466,8 +488,45 @@ window.addEventListener("load", () => {
     },
   ];
 
-  for (let opt of opts) {
-    handleAxisRangeInput(opt);
+  for (let transformElement of transformElements) {
+    handleAxisRangeInput(transformElement);
+  }
+
+  let colourElements = [
+    {
+      inputId: "colour-background-rgb",
+      alphaInputId: "colour-background-a",
+      valueId: "colour-background-a-value",
+      colourKey: "background",
+    },
+    {
+      inputId: "colour-face-1-rgb",
+      alphaInputId: "colour-face-1-a",
+      valueId: "colour-face-1-a-value",
+      colourKey: "face_1",
+    },
+    {
+      inputId: "colour-face-2-rgb",
+      alphaInputId: "colour-face-2-a",
+      valueId: "colour-face-2-a-value",
+      colourKey: "face_2",
+    },
+    {
+      inputId: "colour-face-3-rgb",
+      alphaInputId: "colour-face-3-a",
+      valueId: "colour-face-3-a-value",
+      colourKey: "face_3",
+    },
+    {
+      inputId: "colour-face-4-rgb",
+      alphaInputId: "colour-face-4-a",
+      valueId: "colour-face-4-a-value",
+      colourKey: "face_4",
+    },
+  ];
+
+  for (let colourElement of colourElements) {
+    handleColourInput(colourElement);
   }
 
   let animateButton = document.getElementById("animate");
