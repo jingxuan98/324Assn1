@@ -452,6 +452,11 @@ window.addEventListener("load", () => {
     animate();
   });
 
+  let content = document.getElementById("content");
+  let canvas = document.getElementById("gl-canvas");
+  canvas.width = content.offsetHeight - 32;
+  canvas.height = canvas.width;
+
   // Initialize WebGL canvas after all configurations are populated
   init();
 });
