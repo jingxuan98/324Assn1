@@ -61,7 +61,7 @@ function init() {
   gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
 
   var vColor = gl.getAttribLocation(program, "vColor");
-  gl.vertexAttribPointer(vColor, 3, gl.FLOAT, false, 0, 0);
+  gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vColor);
 
   var vBuffer = gl.createBuffer();
@@ -153,14 +153,16 @@ function triangle(a, b, c, color) {
 
   for (const face of faces) {
     const hex = colours[face][0];
+    const alpha = colours[face][1];
 
-    const RGB = [
+    const RGBA = [
       Number.parseInt(hex.slice(1, 3), 16) / 255,
       Number.parseInt(hex.slice(3, 5), 16) / 255,
       Number.parseInt(hex.slice(5, 7), 16) / 255,
+      alpha,
     ];
 
-    baseColors.push(vec3(...RGB));
+    baseColors.push(vec4(...RGBA));
   }
 
   colors.push(baseColors[color]);
