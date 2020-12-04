@@ -13,7 +13,7 @@ let configurations = {
     face_4: [],
   },
   background_colour: 0,
-  iterations: 1,
+  iterations: 10,
   speed: "normal",
   rotation_axis: "x",
   rotation_angle: {
@@ -36,6 +36,7 @@ let configurations = {
 };
 
 let animation = false;
+let animationIterations = 0;
 let animationData = {};
 
 const handleSubdivisionsInput = () => {
@@ -109,7 +110,6 @@ const handleAxisRangeInput = (opts) => {
 };
 
 function animate() {
-  console.log("animate");
   animation = true;
   animationData = JSON.parse(JSON.stringify(configurations));
 
@@ -405,13 +405,25 @@ function animate() {
   }, speed[animationData.speed]);
 
   let animationInterval = setInterval(() => {
+    if (!animation) {
+      clearInterval(rotationInterval);
+      clearInterval(scalingInterval);
+      clearInterval(translationInterval);
+      clearInterval(animationInterval);
+    }
+
     if (
       completeness.rotation &&
       completeness.scaling &&
       completeness.translation
     ) {
+      animationIterations++;
       animation = false;
       clearInterval(animationInterval);
+
+      if (animationIterations < animationData.iterations) {
+        animate();
+      }
     }
   }, 500);
 }
@@ -456,8 +468,16 @@ window.addEventListener("load", () => {
   }
 
   let animateButton = document.getElementById("animate");
-  animateButton.addEventListener("click", () => {
+  animateButton.addEventListener("click", (e) => {
+    if (animation) {
+      animation = false;
+      e.target.innerHTML = "Start";
+      return;
+    }
+
+    animationIterations = 0;
     animate();
+    e.target.innerHTML = "Stop";
   });
 
   let content = document.getElementById("content");
