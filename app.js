@@ -542,6 +542,12 @@ window.addEventListener("load", () => {
     e.target.innerHTML = "Stop";
   });
 
+  let resetButton = document.getElementById("reset");
+  resetButton.addEventListener("click", (e) => {
+    localStorage.clear();
+    location.reload();
+  });
+
   let content = document.getElementById("content");
   let canvas = document.getElementById("gl-canvas");
   canvas.width = content.offsetHeight - 32;

@@ -37,6 +37,12 @@
   outline: none;
 }
 
+.sidebar-content-button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
 .sidebar-content-radio-group {
   display: flex;
   margin-bottom: 8px;
