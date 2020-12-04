@@ -143,6 +143,9 @@ window.addEventListener("load", () => {
   for (let opt of opts) {
     handleAxisRangeInput(opt);
   }
+
+  // Initialize WebGL canvas after all configurations are populated
+  init();
 });
 
 setInterval(() => {

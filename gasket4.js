@@ -5,17 +5,12 @@ var gl;
 
 var points = [];
 var colors = [];
-var axis = 0;
-var xAxis = 0;
-var yAxis = 1;
-var zAxis = 2;
-var thetaLoc;
-var check = true;
+
 var NumTimesToSubdivide = 3;
 
 let modelViewMatrixLoc;
 
-window.onload = function init() {
+function init() {
   canvas = document.getElementById("gl-canvas");
 
   gl = WebGLUtils.setupWebGL(canvas);
@@ -29,7 +24,7 @@ window.onload = function init() {
 
   // First, initialize the vertices of our 3D gasket
   // Four vertices on unit circle
-  // Intial tetrahedron with equal length sides
+  // Initial tetrahedron with equal length sides
 
   var vertices = [
     vec3(0.0, 0.0, -1.0),
@@ -43,7 +38,7 @@ window.onload = function init() {
     vertices[1],
     vertices[2],
     vertices[3],
-    NumTimesToSubdivide
+    configurations.subdivisions
   );
 
   //
@@ -82,8 +77,27 @@ window.onload = function init() {
 
   modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
 
+  let subdivisionsInput = document.getElementById("subdivisions");
+  subdivisionsInput.addEventListener("input", () => {
+    points = [];
+    colors = [];
+
+    divideTetra(
+      vertices[0],
+      vertices[1],
+      vertices[2],
+      vertices[3],
+      configurations.subdivisions
+    );
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
+  });
+
   render();
-};
+}
 
 function triangle(a, b, c, color) {
   // add colors and vertices for one triangle
