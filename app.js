@@ -119,6 +119,14 @@ function animate() {
     translation: false,
   };
 
+  const speed = {
+    very_fast: 1,
+    fast: 5,
+    normal: 10,
+    slow: 15,
+    very_slow: 20,
+  };
+
   const { rotation_angle: theta } = animationData;
 
   let minTheta = {
@@ -157,15 +165,15 @@ function animate() {
 
     // Change the theta value if the rotation is incomplete
     if (rotationCheckpoint.x < 4) {
-      theta.x += rotateDirection.x * 1;
+      theta.x += rotateDirection.x * 2;
     }
 
     if (rotationCheckpoint.y < 4) {
-      theta.y += rotateDirection.y * 1;
+      theta.y += rotateDirection.y * 2;
     }
 
     if (rotationCheckpoint.z < 4) {
-      theta.z += rotateDirection.z * 1;
+      theta.z += rotateDirection.z * 2;
     }
 
     // A complete rotation should hit the origin twice
@@ -205,7 +213,7 @@ function animate() {
     ) {
       completeness.rotation = true;
     }
-  }, 10);
+  }, speed[animationData.speed]);
 
   const { scaling_factor: factor } = animationData;
 
@@ -252,15 +260,15 @@ function animate() {
     }
 
     if (scaleCheckpoint.x < 4) {
-      factor.x += scaleDirection.x * 0.01;
+      factor.x += scaleDirection.x * 0.02;
     }
 
     if (scaleCheckpoint.y < 4) {
-      factor.y += scaleDirection.y * 0.01;
+      factor.y += scaleDirection.y * 0.02;
     }
 
     if (scaleCheckpoint.z < 4) {
-      factor.z += scaleDirection.z * 0.01;
+      factor.z += scaleDirection.z * 0.02;
     }
 
     if (Math.abs(factor.x - initialFactor) < 0.001) {
@@ -297,7 +305,7 @@ function animate() {
     ) {
       completeness.scaling = true;
     }
-  }, 10);
+  }, speed[animationData.speed]);
 
   const { translation_magnitude: translation } = animationData;
 
@@ -340,15 +348,15 @@ function animate() {
     }
 
     if (translationCheckpoint.x < 4) {
-      translation.x += translateDirection.x * 0.01;
+      translation.x += translateDirection.x * 0.02;
     }
 
     if (translationCheckpoint.y < 4) {
-      translation.y += translateDirection.y * 0.01;
+      translation.y += translateDirection.y * 0.02;
     }
 
     if (translationCheckpoint.z < 4) {
-      translation.z += translateDirection.z * 0.01;
+      translation.z += translateDirection.z * 0.02;
     }
 
     if (Math.abs(translation.x) < 0.001) {
@@ -394,7 +402,7 @@ function animate() {
     ) {
       completeness.translation = true;
     }
-  }, 10);
+  }, speed[animationData.speed]);
 
   let animationInterval = setInterval(() => {
     if (
