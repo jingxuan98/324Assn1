@@ -70,16 +70,14 @@
 }
 
 .content {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 5px 10px rgb(0 0 0 / 30%), 0 15px 40px rgb(0 0 0 / 44%);
   display: flex;
   justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  background: #ffffff;
-  box-shadow: 0 5px 10px rgb(0 0 0 / 30%), 0 15px 40px rgb(0 0 0 / 44%);
-  padding: 20px;
-  border-radius: 25px;
-  width: 600px;
-  margin: 0 auto;
+  margin: 32px auto;
+  padding: 16px;
+  width: calc(100vh - 96px);
 }
 
 .row {
