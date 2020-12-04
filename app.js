@@ -423,6 +423,9 @@ function animate() {
 
       if (animationIterations < animationData.iterations) {
         animate();
+      } else {
+        let button = document.getElementById("animate");
+        button.innerHTML = "Start";
       }
     }
   }, 500);
