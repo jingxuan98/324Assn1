@@ -26,6 +26,17 @@
   width: 100%;
 }
 
+.sidebar-content input[type=color] {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.sidebar-content input[type=color]:focus {
+  outline: none;
+}
+
 .sidebar-content-radio-group {
   display: flex;
   margin-bottom: 8px;
@@ -47,7 +58,16 @@
   display: flex;
 }
 
-.sidebar-content-range-group > div {
+input + .sidebar-content-range-group {
+  margin-top: 8px;
+}
+
+.sidebar-content-range-group > div:first-child {
+  color: hsl(212, 0%, 40%);
+  margin-right: 8px;
+}
+
+.sidebar-content-range-group > div:not(:first-child) {
   color: hsl(212, 0%, 40%);
   margin-left: 8px;
   text-align: right;

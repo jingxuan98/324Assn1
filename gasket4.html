@@ -60,33 +60,48 @@
           </div>
           <div class="sidebar-content-group">
             <label>Colour (Face 1)</label>
-            <div class="sidebar-content-radio-group">
-              <div>
-                <input type="radio" id="solid" name="colour-mode" value="x">
-                <label for="solid">Solid</label><br>
-              </div>
-              <div>
-                <input type="radio" id="gradient" name="colour-mode" value="y">
-                <label for="gradient">Gradient</label>
-              </div>
+            <input id="colour-face-1-rgb" type="color" />
+            <div class="sidebar-content-range-group">
+              <div>A</div>
+              <input id="colour-face-1-a" type="range" min=0 max=1 step=0.01 />
+              <div id="colour-face-1-a-value">0</div>
             </div>
-            <input name="" type="color" />
           </div>
           <div class="sidebar-content-group">
             <label>Colour (Face 2)</label>
-            <input name="" type="color" />
+            <input id="colour-face-2-rgb" type="color" />
+            <div class="sidebar-content-range-group">
+              <div>A</div>
+              <input id="colour-face-2-a" type="range" min=0 max=1 step=0.01 />
+              <div id="colour-face-2-a-value">0</div>
+            </div>
           </div>
           <div class="sidebar-content-group">
             <label>Colour (Face 3)</label>
-            <input name="" type="color" />
+            <input id="colour-face-3-rgb" type="color" />
+            <div class="sidebar-content-range-group">
+              <div>A</div>
+              <input id="colour-face-3-a" type="range" min=0 max=1 step=0.01 />
+              <div id="colour-face-3-a-value">0</div>
+            </div>
           </div>
           <div class="sidebar-content-group">
             <label>Colour (Face 4)</label>
-            <input name="" type="color" />
+            <input id="colour-face-4-rgb" type="color" />
+            <div class="sidebar-content-range-group">
+              <div>A</div>
+              <input id="colour-face-4-a" type="range" min=0 max=1 step=0.01 />
+              <div id="colour-face-4-a-value">0</div>
+            </div>
           </div>
           <div class="sidebar-content-group">
             <label>Background Colour</label>
-            <input name="" type="color" />
+            <input id="colour-background-rgb" type="color" />
+            <div class="sidebar-content-range-group">
+              <div>A</div>
+              <input id="colour-background-a" type="range" min=0 max=1 step=0.01 />
+              <div id="colour-background-a-value">0</div>
+            </div>
           </div>
           <div class="sidebar-content-title">
             Animation Properties
