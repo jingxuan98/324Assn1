@@ -35,6 +35,9 @@ let configurations = {
   },
 };
 
+let animation = false;
+let animationData = {};
+
 const handleSubdivisionsInput = () => {
   let subdivisionsInput = document.getElementById("subdivisions");
   let subdivisionsValue = document.getElementById("subdivisions-value");
@@ -105,6 +108,132 @@ const handleAxisRangeInput = (opts) => {
   });
 };
 
+function animate() {
+  console.log("animate");
+  animation = true;
+  animationData = JSON.parse(JSON.stringify(configurations));
+
+  let completeness = {
+    rotation: false,
+    scaling: false,
+    translation: false,
+  };
+
+  const { rotation_angle: theta } = animationData;
+
+  let minTheta = {
+    x: -Math.abs(theta.x),
+    y: -Math.abs(theta.y),
+    z: -Math.abs(theta.z),
+  };
+
+  let maxTheta = {
+    x: Math.abs(theta.x),
+    y: Math.abs(theta.y),
+    z: Math.abs(theta.z),
+  };
+
+  let rotateDirection = {
+    x: Math.sign(theta.x),
+    y: Math.sign(theta.y),
+    z: Math.sign(theta.z),
+  };
+
+  let rotationCheckpoint = {
+    x: 0,
+    y: 0,
+    z: 0,
+  };
+
+  theta.x = 0;
+  theta.y = 0;
+  theta.z = 0;
+
+  let rotationInterval = setInterval(() => {
+    if (completeness.rotation) {
+      clearInterval(rotationInterval);
+      return;
+    }
+
+    // Change the theta value if the rotation is incomplete
+    if (rotationCheckpoint.x < 4) {
+      theta.x += rotateDirection.x * 1;
+    }
+
+    if (rotationCheckpoint.y < 4) {
+      theta.y += rotateDirection.y * 1;
+    }
+
+    if (rotationCheckpoint.z < 4) {
+      theta.z += rotateDirection.z * 1;
+    }
+
+    // A complete rotation should hit the origin twice
+    if (theta.x == 0) {
+      rotationCheckpoint.x += 1;
+    }
+
+    if (theta.y == 0) {
+      rotationCheckpoint.y += 1;
+    }
+
+    if (theta.z == 0) {
+      rotationCheckpoint.z += 1;
+    }
+
+    if (theta.x == minTheta.x || theta.x == maxTheta.x) {
+      rotateDirection.x *= -1;
+      rotationCheckpoint.x += 1
+    }
+
+    if (theta.y == minTheta.y || theta.y == maxTheta.y) {
+      rotateDirection.y *= -1;
+      rotationCheckpoint.y += 1;
+    }
+
+    if (theta.z == minTheta.z || theta.z == maxTheta.z) {
+      rotateDirection.z *= -1;
+      rotationCheckpoint.z += 1;
+    }
+
+    // A complete rotation needs to reach minimum theta, origin, maximum theta,
+    // and back to the origin
+    if (
+      rotationCheckpoint.x >= 4 &&
+      rotationCheckpoint.y >= 4 &&
+      rotationCheckpoint.z >= 4
+    ) {
+      completeness.rotation = true;
+    }
+  }, 10);
+
+  // let minFactor = 0.5;
+  // let maxFactor = 1.5;
+
+  // let scaleDirection = 1;
+
+  // let scalingInterval = setInterval(() => {
+  //   if (!completeness.rotation) {
+  //     return;
+  //   }
+
+  //   if (completeness.scaling) {
+  //     clearInterval(scalingInterval);
+  //     return;
+  //   }
+
+  //   config.scaling_factor.x += scaleDirection * 0.01;
+  //   config.scaling_factor.y += scaleDirection * 0.01;
+
+  //   if (
+  //     Math.abs(scaleX - minFactor) < 0.01 ||
+  //     Math.abs(scaleX - maxFactor) < 0.01
+  //   ) {
+  //     scaleDirection *= -1;
+  //   }
+  // }, 10);
+}
+
 window.addEventListener("load", () => {
   let savedConfigurations = localStorage.getItem("configurations");
 
@@ -143,6 +272,11 @@ window.addEventListener("load", () => {
   for (let opt of opts) {
     handleAxisRangeInput(opt);
   }
+
+  let animateButton = document.getElementById("animate");
+  animateButton.addEventListener("click", () => {
+    animate();
+  });
 
   // Initialize WebGL canvas after all configurations are populated
   init();
