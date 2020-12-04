@@ -42,6 +42,133 @@
 
   <body>
     <div class="container">
+      <div class="sidebar">
+        <div class="sidebar-content">
+          <div class="sidebar-content-title">
+            Gasket Properties
+          </div>
+          <div class="sidebar-content-group">
+            <label>Number of Subdivisions</label>
+            <div class="sidebar-content-range-group">
+              <input id="subdivisions" type="range" min=1 max=10 step=1 />
+              <div id="subdivisions-value">0</div>
+            </div>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Colour (Face 1)</label>
+            <div class="sidebar-content-radio-group">
+              <div>
+                <input type="radio" id="solid" name="colour-mode" value="x">
+                <label for="solid">Solid</label><br>
+              </div>
+              <div>
+                <input type="radio" id="gradient" name="colour-mode" value="y">
+                <label for="gradient">Gradient</label>
+              </div>
+            </div>
+            <input name="" type="color" />
+          </div>
+          <div class="sidebar-content-group">
+            <label>Colour (Face 2)</label>
+            <input name="" type="color" />
+          </div>
+          <div class="sidebar-content-group">
+            <label>Colour (Face 3)</label>
+            <input name="" type="color" />
+          </div>
+          <div class="sidebar-content-group">
+            <label>Colour (Face 4)</label>
+            <input name="" type="color" />
+          </div>
+          <div class="sidebar-content-group">
+            <label>Background Colour</label>
+            <input name="" type="color" />
+          </div>
+          <div class="sidebar-content-title">
+            Animation Properties
+          </div>
+          <div class="sidebar-content-group">
+            <label>Number of Iterations</label>
+            <div class="sidebar-content-range-group">
+              <input id="iterations" type="range" min=1 max=10 step=1 />
+              <div id="iterations-value">0</div>
+            </div>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Speed</label>
+            <select id="speed">
+              <option value="very-slow">Very Slow</option>
+              <option value="slow">Slow</option>
+              <option value="normal">Normal</option>
+              <option value="fast">Fast</option>
+              <option value="very-fast">Very Fast</option>
+            </select>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Rotation Angle (°)</label>
+            <div class="sidebar-content-radio-group">
+              <div>
+                <input type="radio" id="rotation-x" name="rotation-axis" value="x">
+                <label for="rotation-x">X Axis</label><br>
+              </div>
+              <div>
+                <input type="radio" id="rotation-y" name="rotation-axis" value="y">
+                <label for="rotation-y">Y Axis</label>
+              </div>
+              <div>
+                <input type="radio" id="rotation-z" name="rotation-axis" value="z">
+                <label for="rotation-z">Z Axis</label>
+              </div>
+            </div>
+            <div class="sidebar-content-range-group">
+              <input id="rotation" type="range" min=-180 max=180 step=1 />
+              <div id="rotation-value">0</div>
+            </div>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Translation Magnitude</label>
+            <div class="sidebar-content-radio-group">
+              <div>
+                <input type="radio" id="translation-x" name="translation-axis" value="x">
+                <label for="translation-x">X Axis</label><br>
+              </div>
+              <div>
+                <input type="radio" id="translation-y" name="translation-axis" value="y">
+                <label for="translation-y">Y Axis</label>
+              </div>
+              <div>
+                <input type="radio" id="translation-z" name="translation-axis" value="z">
+                <label for="translation-z">Z Axis</label>
+              </div>
+            </div>
+            <div class="sidebar-content-range-group">
+              <input id="translation" type="range" min=-10 max=10 step=1 value=0/>
+              <div id="translation-value">0</div>
+            </div>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Scaling Factor</label>
+            <div class="sidebar-content-radio-group">
+              <div>
+                <input type="radio" id="scale-x" name="scaling-axis" value="x">
+                <label for="scale-x">X Axis</label><br>
+              </div>
+              <div>
+                <input type="radio" id="scale-y" name="scaling-axis" value="y">
+                <label for="scale-y">Y Axis</label>
+              </div>
+              <div>
+                <input type="radio" id="scale-z" name="scaling-axis" value="z">
+                <label for="scale-z">Z Axis</label>
+              </div>
+            </div>
+            <div class="sidebar-content-range-group">
+              <input id="scaling" type="range" min=0 max=2 step=0.1 />
+              <div id="scaling-value">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="content">
         <div class="row" width="512" height="512">
           <canvas id="gl-canvas" width="368" height="368">
@@ -56,6 +183,7 @@
         </div>
       </div>
     </div>
+    <script type="text/javascript" src="app.js"></script>
   </body>
 </html>
 
