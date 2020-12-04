@@ -165,15 +165,15 @@ function animate() {
 
     // Change the theta value if the rotation is incomplete
     if (rotationCheckpoint.x < 4) {
-      theta.x += rotateDirection.x * 2;
+      theta.x += rotateDirection.x * 1;
     }
 
     if (rotationCheckpoint.y < 4) {
-      theta.y += rotateDirection.y * 2;
+      theta.y += rotateDirection.y * 1;
     }
 
     if (rotationCheckpoint.z < 4) {
-      theta.z += rotateDirection.z * 2;
+      theta.z += rotateDirection.z * 1;
     }
 
     // A complete rotation should hit the origin twice
