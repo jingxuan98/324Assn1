@@ -1,5 +1,5 @@
 let configurations = {
-  subdivisions: 1,
+  subdivisions: 2,
   colour_solid: {
     background: ["#ffffff", 1],
     face_1: ["#ff0000", 1],
@@ -160,6 +160,10 @@ function animate() {
 
   animationData.subdivisions = minSubdivisions;
   document.dispatchEvent(subdivisionEvent);
+
+  animationData.translation_magnitude.x = 0;
+  animationData.translation_magnitude.y = 0;
+  animationData.translation_magnitude.z = 0;
 
   let subdivisionInterval = setInterval(() => {
     if (completeness.subdivision) {
@@ -369,24 +373,25 @@ function animate() {
     }
   }, speed[animationData.speed]);
 
+  const { translation_magnitude: configuredTranslation } = configurations;
   const { translation_magnitude: translation } = animationData;
 
   let minTranslation = {
-    x: -Math.abs(translation.x),
-    y: -Math.abs(translation.y),
-    z: -Math.abs(translation.z),
+    x: -Math.abs(configuredTranslation.x),
+    y: -Math.abs(configuredTranslation.y),
+    z: -Math.abs(configuredTranslation.z),
   };
 
   let maxTranslation = {
-    x: Math.abs(translation.x),
-    y: Math.abs(translation.y),
-    z: Math.abs(translation.z),
+    x: Math.abs(configuredTranslation.x),
+    y: Math.abs(configuredTranslation.y),
+    z: Math.abs(configuredTranslation.z),
   };
 
   let translateDirection = {
-    x: Math.sign(translation.x),
-    y: Math.sign(translation.y),
-    z: Math.sign(translation.z),
+    x: Math.sign(configuredTranslation.x),
+    y: Math.sign(configuredTranslation.y),
+    z: Math.sign(configuredTranslation.z),
   };
 
   let translationCheckpoint = {
