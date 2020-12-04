@@ -19,18 +19,18 @@ let configurations = {
   rotation_angle: {
     x: 0,
     y: 0,
-    z: 0,
+    z: -180,
   },
   translation_axis: "x",
   translation_magnitude: {
-    x: 0,
-    y: 0,
+    x: -3.5,
+    y: -3.5,
     z: 0,
   },
   scaling_axis: "x",
   scaling_factor: {
-    x: 1,
-    y: 1,
+    x: 2,
+    y: 2,
     z: 1,
   },
 };
