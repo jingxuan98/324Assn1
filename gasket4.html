@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>3D Sierpinski Gasket</title>
     <link rel="stylesheet" href="index.css" />
 
@@ -145,7 +146,7 @@
               </div>
             </div>
             <div class="sidebar-content-range-group">
-              <input id="translation" type="range" min=-10 max=10 step=1 value=0/>
+              <input id="translation" type="range" min=-3.5 max=3.5 step=0.1 value=0/>
               <div id="translation-value">0</div>
             </div>
           </div>
@@ -172,30 +173,13 @@
           </div>
         </div>
       </div>
-      <div class="content">
-        <div class="row" width="512" height="512">
-          <canvas id="gl-canvas" width="368" height="368">
-            Oops ... your browser doesn't support the HTML5 canvas element
-          </canvas>
-        </div>
-        <div class="row">
-          <button id="animate">Start</button>
-        </div>
+      <div id="content" class="content">
+        <canvas id="gl-canvas">
+          Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
       </div>
     </div>
     <script type="text/javascript" src="gasket4.js"></script>
     <script type="text/javascript" src="app.js"></script>
   </body>
 </html>
-
-<!-- attribute vec4 vPosition;
-      attribute vec4 vColor;
-      varying vec4 vColor;
-      uniform mat4 modelViewMatrix;
-
-      modelViewMatrix = mat4();
-      modelViewMatrix = mult(modelView, rotateX(thetaArray[xAxis]));
-      modelViewMatrix = mult(modelView, rotateY(thetaArray[yAxis]));
-      modelViewMatrix = mult(modelView, rotateZ(thetaArray[zAxis])); -->
-
-<!-- gl_Position = modelViewMatrix * vPosition; -->
