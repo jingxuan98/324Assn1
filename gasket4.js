@@ -43,7 +43,6 @@ function init() {
   //  Configure WebGL
   //
   gl.viewport(0, 0, canvas.width, canvas.height);
-  gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
   // enable hidden-surface removal
 
@@ -95,8 +94,6 @@ function init() {
 
   const inputs = [
     "subdivisions",
-    "colour-background-rgb",
-    "colour-background-a",
     "colour-face-1-rgb",
     "colour-face-1-a",
     "colour-face-2-rgb",
@@ -107,9 +104,34 @@ function init() {
     "colour-face-4-a",
   ];
 
+  const recalculateBackgroundColour = () => {
+    const { colour_solid: colours } = configurations;
+
+    const hex = colours.background[0];
+    const alpha = colours.background[1];
+
+    const RGBA = [
+      Number.parseInt(hex.slice(1, 3), 16) / 255,
+      Number.parseInt(hex.slice(3, 5), 16) / 255,
+      Number.parseInt(hex.slice(5, 7), 16) / 255,
+      alpha,
+    ];
+
+    gl.clearColor(...RGBA);
+  };
+
+  recalculateBackgroundColour();
+
   for (const input of inputs) {
     const element = document.getElementById(input);
     element.addEventListener("input", recalculateTriangle);
+  }
+
+  const backgroundInputs = ["colour-background-rgb", "colour-background-a"];
+  for (const input of backgroundInputs) {
+    const element = document.getElementById(input);
+
+    element.addEventListener("input", recalculateBackgroundColour);
   }
 
   render();
