@@ -36,6 +36,7 @@ let configurations = {
 };
 
 let animation = false;
+let animationIntervals = [];
 let animationIterations = 0;
 let animationData = {};
 
@@ -189,6 +190,8 @@ function animate() {
     }
   }, speed[animationData.speed] * 50);
 
+  animationIntervals.push(subdivisionInterval);
+
   const { rotation_angle: theta } = animationData;
 
   let minTheta = {
@@ -281,6 +284,8 @@ function animate() {
     }
   }, speed[animationData.speed]);
 
+  animationIntervals.push(rotationInterval);
+
   const { scaling_factor: factor } = animationData;
 
   const initialFactor = 1;
@@ -372,6 +377,8 @@ function animate() {
       completeness.scaling = true;
     }
   }, speed[animationData.speed]);
+
+  animationIntervals.push(scalingInterval);
 
   const { translation_magnitude: configuredTranslation } = configurations;
   const { translation_magnitude: translation } = animationData;
@@ -475,14 +482,9 @@ function animate() {
     }
   }, speed[animationData.speed]);
 
-  let animationInterval = setInterval(() => {
-    if (!animation) {
-      clearInterval(rotationInterval);
-      clearInterval(scalingInterval);
-      clearInterval(translationInterval);
-      clearInterval(animationInterval);
-    }
+  animationIntervals.push(translationInterval);
 
+  let animationInterval = setInterval(() => {
     if (
       completeness.subdivision &&
       completeness.rotation &&
@@ -496,11 +498,13 @@ function animate() {
       if (animationIterations < animationData.iterations) {
         animate();
       } else {
-        let button = document.getElementById("animate");
-        button.innerHTML = "Start";
+        let animateButton = document.getElementById("animate");
+        animateButton.innerHTML = "Start";
       }
     }
   }, 500);
+
+  animationIntervals.push(animationInterval);
 }
 
 window.addEventListener("load", () => {
@@ -583,6 +587,7 @@ window.addEventListener("load", () => {
   animateButton.addEventListener("click", (e) => {
     if (animation) {
       animation = false;
+      animationIntervals.forEach((interval) => clearInterval(interval));
       e.target.innerHTML = "Start";
       return;
     }
@@ -593,9 +598,18 @@ window.addEventListener("load", () => {
   });
 
   let resetButton = document.getElementById("reset");
-  resetButton.addEventListener("click", (e) => {
+  resetButton.addEventListener("click", () => {
     localStorage.clear();
     location.reload();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    console.log(e.key);
+    // 13 - Enter
+    // 32 - Space Character
+    if (e.keyCode == 13 || e.keyCode == 32) {
+      animateButton.click();
+    }
   });
 
   let content = document.getElementById("content");
