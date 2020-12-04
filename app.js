@@ -395,6 +395,17 @@ function animate() {
       completeness.translation = true;
     }
   }, 10);
+
+  let animationInterval = setInterval(() => {
+    if (
+      completeness.rotation &&
+      completeness.scaling &&
+      completeness.translation
+    ) {
+      animation = false;
+      clearInterval(animationInterval);
+    }
+  }, 500);
 }
 
 window.addEventListener("load", () => {
