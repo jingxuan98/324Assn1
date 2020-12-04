@@ -23,8 +23,8 @@ let configurations = {
   },
   translation_axis: "x",
   translation_magnitude: {
-    x: -3.5,
-    y: -3.5,
+    x: -3,
+    y: -3,
     z: 0,
   },
   scaling_axis: "x",
