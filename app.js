@@ -263,15 +263,15 @@ function animate() {
       factor.z += scaleDirection.z * 0.01;
     }
 
-    if (Math.abs(factor.x - initialFactor) < 0.01) {
+    if (Math.abs(factor.x - initialFactor) < 0.001) {
       scaleCheckpoint.x += 1;
     }
 
-    if (Math.abs(factor.y - initialFactor) < 0.01) {
+    if (Math.abs(factor.y - initialFactor) < 0.001) {
       scaleCheckpoint.y += 1;
     }
 
-    if (Math.abs(factor.z - initialFactor) < 0.01) {
+    if (Math.abs(factor.z - initialFactor) < 0.001) {
       scaleCheckpoint.z += 1;
     }
 
@@ -285,7 +285,7 @@ function animate() {
       scaleCheckpoint.y += 1;
     }
 
-    if (factor.z - minFactor.z < 0.001 || maxFactor.z - factor.z < 0.001) {
+    if (factor.z - minFactor.z < 0.01 || maxFactor.z - factor.z < 0.01) {
       scaleDirection.z *= -1;
       scaleCheckpoint.z += 1;
     }
@@ -296,6 +296,103 @@ function animate() {
       scaleCheckpoint.z >= 4
     ) {
       completeness.scaling = true;
+    }
+  }, 10);
+
+  const { translation_magnitude: translation } = animationData;
+
+  let minTranslation = {
+    x: -Math.abs(translation.x),
+    y: -Math.abs(translation.y),
+    z: -Math.abs(translation.z),
+  };
+
+  let maxTranslation = {
+    x: Math.abs(translation.x),
+    y: Math.abs(translation.y),
+    z: Math.abs(translation.z),
+  };
+
+  let translateDirection = {
+    x: Math.sign(translation.x),
+    y: Math.sign(translation.y),
+    z: Math.sign(translation.z),
+  };
+
+  let translationCheckpoint = {
+    x: 0,
+    y: 0,
+    z: 0,
+  };
+
+  translation.x = 0;
+  translation.y = 0;
+  translation.z = 0;
+
+  let translationInterval = setInterval(() => {
+    if (!completeness.rotation || !completeness.scaling) {
+      return;
+    }
+
+    if (completeness.translation) {
+      clearInterval(translationInterval);
+      return;
+    }
+
+    if (translationCheckpoint.x < 4) {
+      translation.x += translateDirection.x * 0.01;
+    }
+
+    if (translationCheckpoint.y < 4) {
+      translation.y += translateDirection.y * 0.01;
+    }
+
+    if (translationCheckpoint.z < 4) {
+      translation.z += translateDirection.z * 0.01;
+    }
+
+    if (Math.abs(translation.x) < 0.001) {
+      translationCheckpoint.x += 1;
+    }
+
+    if (Math.abs(translation.y) < 0.001) {
+      translationCheckpoint.y += 1;
+    }
+
+    if (Math.abs(translation.z) < 0.001) {
+      translationCheckpoint.z += 1;
+    }
+
+    if (
+      translation.x - minTranslation.x < 0.01 ||
+      maxTranslation.x - translation.x < 0.01
+    ) {
+      translateDirection.x *= -1;
+      translationCheckpoint.x += 1;
+    }
+
+    if (
+      translation.y - minTranslation.y < 0.01 ||
+      maxTranslation.y - translation.y < 0.01
+    ) {
+      translateDirection.y *= -1;
+      translationCheckpoint.y += 1;
+    }
+
+    if (
+      translation.z - minTranslation.z < 0.01 ||
+      maxTranslation.z - translation.z < 0.01
+    ) {
+      translateDirection.z *= -1;
+      translationCheckpoint.z += 1;
+    }
+
+    if (
+      translationCheckpoint.x >= 4 &&
+      translationCheckpoint.y >= 4 &&
+      translationCheckpoint.z >= 4
+    ) {
+      completeness.translation = true;
     }
   }, 10);
 }
