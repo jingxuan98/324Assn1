@@ -5,16 +5,10 @@ var gl;
 
 var points = [];
 var colors = [];
-var axis = 0;
-var xAxis = 0;
-var yAxis = 1;
-var zAxis = 2;
-var theta = [0, 0, 0];
-var thetaLoc;
-var check = true;
-var NumTimesToSubdivide = 3;
 
-window.onload = function init() {
+let modelViewMatrixLoc;
+
+function init() {
   canvas = document.getElementById("gl-canvas");
 
   gl = WebGLUtils.setupWebGL(canvas);
@@ -28,13 +22,13 @@ window.onload = function init() {
 
   // First, initialize the vertices of our 3D gasket
   // Four vertices on unit circle
-  // Intial tetrahedron with equal length sides
+  // Initial tetrahedron with equal length sides
 
   var vertices = [
     vec3(0.0, 0.0, -1.0),
     vec3(0.0, 0.9428, 0.3333),
     vec3(-0.8165, -0.4714, 0.3333),
-    vec3(0.8165, -0.4714, 0.3333)
+    vec3(0.8165, -0.4714, 0.3333),
   ];
 
   divideTetra(
@@ -42,14 +36,13 @@ window.onload = function init() {
     vertices[1],
     vertices[2],
     vertices[3],
-    NumTimesToSubdivide
+    configurations.subdivisions
   );
 
   //
   //  Configure WebGL
   //
   gl.viewport(0, 0, canvas.width, canvas.height);
-  gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
   // enable hidden-surface removal
 
@@ -68,7 +61,7 @@ window.onload = function init() {
   gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
 
   var vColor = gl.getAttribLocation(program, "vColor");
-  gl.vertexAttribPointer(vColor, 3, gl.FLOAT, false, 0, 0);
+  gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vColor);
 
   var vBuffer = gl.createBuffer();
@@ -79,18 +72,108 @@ window.onload = function init() {
   gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vPosition);
 
+  modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
+
+  const recalculateTriangle = () => {
+    let config = {};
+
+    if (animation) {
+      config = animationData;
+    } else {
+      config = configurations;
+    }
+
+    points = [];
+    colors = [];
+
+    divideTetra(
+      vertices[0],
+      vertices[1],
+      vertices[2],
+      vertices[3],
+      config.subdivisions
+    );
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
+  };
+
+  const inputs = [
+    "subdivisions",
+    "colour-face-1-rgb",
+    "colour-face-1-a",
+    "colour-face-2-rgb",
+    "colour-face-2-a",
+    "colour-face-3-rgb",
+    "colour-face-3-a",
+    "colour-face-4-rgb",
+    "colour-face-4-a",
+  ];
+
+  for (const input of inputs) {
+    const element = document.getElementById(input);
+    element.addEventListener("input", recalculateTriangle);
+  }
+
+  document.addEventListener("subdivision", recalculateTriangle);
+
+  const recalculateBackgroundColour = () => {
+    const { colour_solid: colours } = configurations;
+
+    const hex = colours.background[0];
+    const alpha = colours.background[1];
+
+    const RGBA = [
+      Number.parseInt(hex.slice(1, 3), 16) / 255,
+      Number.parseInt(hex.slice(3, 5), 16) / 255,
+      Number.parseInt(hex.slice(5, 7), 16) / 255,
+      alpha,
+    ];
+
+    gl.clearColor(...RGBA);
+  };
+
+  recalculateBackgroundColour();
+
+  const backgroundInputs = ["colour-background-rgb", "colour-background-a"];
+  for (const input of backgroundInputs) {
+    const element = document.getElementById(input);
+
+    element.addEventListener("input", recalculateBackgroundColour);
+  }
+
   render();
-};
+}
 
 function triangle(a, b, c, color) {
   // add colors and vertices for one triangle
 
-  var baseColors = [
-    vec3(1.0, 0.0, 0.0),
-    vec3(0.0, 1.0, 0.0),
-    vec3(0.0, 0.0, 1.0),
-    vec3(0.0, 0.0, 0.0)
-  ];
+  // var baseColors = [
+  //   vec3(1.0, 0.0, 0.0),
+  //   vec3(0.0, 1.0, 0.0),
+  //   vec3(0.0, 0.0, 1.0),
+  //   vec3(0.0, 0.0, 0.0),
+  // ];
+  let baseColors = [];
+
+  const { colour_solid: colours } = configurations;
+  const faces = ["face_1", "face_2", "face_3", "face_4"];
+
+  for (const face of faces) {
+    const hex = colours[face][0];
+    const alpha = colours[face][1];
+
+    const RGBA = [
+      Number.parseInt(hex.slice(1, 3), 16) / 255,
+      Number.parseInt(hex.slice(3, 5), 16) / 255,
+      Number.parseInt(hex.slice(5, 7), 16) / 255,
+      alpha,
+    ];
+
+    baseColors.push(vec4(...RGBA));
+  }
 
   colors.push(baseColors[color]);
   points.push(a);
@@ -139,14 +222,43 @@ function divideTetra(a, b, c, d, count) {
 function render() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  // theta[yAxis] += 2.0;
-  // gl.uniform3fv(thetaLoc, theta);
+  let config = {};
 
-  // theta[axis] += 2.0;
-  // ctm = rotateX(theta[xAxis]);
-  // ctm = mult(ctm, rotateY(theta[yAxis]));
-  // ctm = mult(ctm, rotatez(theta[zAxis]));
-  // gl.uniform4fv(modelViewMatrix, false, flatten(ctm));
+  if (animation) {
+    config = animationData;
+  } else {
+    config = configurations;
+  }
+
+  const { x: scaleX, y: scaleY, z: scaleZ } = config.scaling_factor;
+  const scaleW = 2;
+
+  const theta = config.rotation_angle;
+
+  const {
+    x: translateX,
+    y: translateY,
+    z: translateZ,
+  } = config.translation_magnitude;
+
+  // prettier-ignore
+  let scaleFactor = mat4(
+    scaleX, 0, 0, 0,
+    0, scaleY, 0, 0,
+    0, 0, scaleZ, 0,
+    0, 0, 0, scaleW
+  );
+
+  let modelViewMatrix = rotateX(theta.x);
+  modelViewMatrix = mult(modelViewMatrix, rotateY(theta.y));
+  modelViewMatrix = mult(modelViewMatrix, rotateZ(theta.z));
+  modelViewMatrix = mult(modelViewMatrix, scaleFactor);
+  modelViewMatrix = mult(
+    modelViewMatrix,
+    translate(translateX, translateY, translateZ)
+  );
+
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
   gl.drawArrays(gl.TRIANGLES, 0, points.length);
   requestAnimFrame(render);

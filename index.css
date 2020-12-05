@@ -1,23 +1,109 @@
 .container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(to right, #fc466b, #3f5efb);
-  width: 100%;
   height: 100%;
 }
 
+.sidebar {
+  background: linear-gradient(180deg, #f0f2f6, #fafafa);
+  width: 320px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.sidebar-content {
+  margin: 32px 16px;
+}
+
+.sidebar-content label {
+  color: hsl(212, 0%, 40%);
+  display: block;
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+}
+
+.sidebar-content input {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.sidebar-content input[type=color] {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.sidebar-content input[type=color]:focus {
+  outline: none;
+}
+
+.sidebar-content-button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.sidebar-content-radio-group {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.sidebar-content-radio-group > div:not(:first-child) {
+  margin-left: 16px;
+}
+
+.sidebar-content-radio-group label {
+  display: inline;
+}
+
+.sidebar-content-radio-group input {
+  width: auto;
+}
+
+.sidebar-content-range-group {
+  display: flex;
+}
+
+input + .sidebar-content-range-group {
+  margin-top: 8px;
+}
+
+.sidebar-content-range-group > div:first-child {
+  color: hsl(212, 0%, 40%);
+  margin-right: 8px;
+}
+
+.sidebar-content-range-group > div:not(:first-child) {
+  color: hsl(212, 0%, 40%);
+  margin-left: 8px;
+  text-align: right;
+  width: 40px;
+}
+
+.sidebar-content select {
+  width: 100%;
+  height: 40px;
+}
+
+.sidebar-content-title {
+  font-size: 0.875rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.sidebar-content-group:not(:last-child) {
+  margin-bottom: 24px;
+}
+
 .content {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 5px 10px rgb(0 0 0 / 30%), 0 15px 40px rgb(0 0 0 / 44%);
   display: flex;
   justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  background: #ffffff;
-  box-shadow: 0 5px 10px rgb(0 0 0 / 30%), 0 15px 40px rgb(0 0 0 / 44%);
-  padding: 20px;
-  border-radius: 25px;
-  height: auto;
-  width: 600px;
+  margin: 32px auto;
+  padding: 16px;
+  width: calc(100vh - 96px);
 }
 
 .row {
@@ -26,12 +112,14 @@
   align-items: center;
 }
 
-html {
-  height: -webkit-fill-available;
+html,
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
 }
 
 body {
-  height: -webkit-fill-available;
+  background: linear-gradient(to right, #fc466b, #3f5efb);
 }
 
 button {

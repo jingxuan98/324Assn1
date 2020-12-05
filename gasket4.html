@@ -2,21 +2,23 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>3D Sierpinski Gasket</title>
     <link rel="stylesheet" href="index.css" />
 
     <script id="vertex-shader" type="x-shader/x-vertex">
       attribute vec3 vPosition;
-      attribute vec3 vColor;
+      attribute vec4 vColor;
       varying vec4 color;
+
+      uniform mat4 modelViewMatrix;
 
       void
       main()
       {
-          gl_Position = vec4(vPosition, 1.0);
+          gl_Position = modelViewMatrix * vec4(vPosition, 1.0);
 
-
-          color = vec4(vColor, 1.0);
+          color = vColor;
       }
     </script>
 
@@ -35,31 +37,164 @@
     <script type="text/javascript" src="./Common/webgl-utils.js"></script>
     <script type="text/javascript" src="./Common/initShaders.js"></script>
     <script type="text/javascript" src="./Common/MV.js"></script>
-    <script type="text/javascript" src="gasket4.js"></script>
+
   </head>
 
   <body>
     <div class="container">
-      <div class="content">
-        <div class="row" width="512" height="512">
-          <canvas id="gl-canvas" width="368" height="368">
-            Oops ... your browser doesn't support the HTML5 canvas element
-          </canvas>
+      <div class="sidebar">
+        <div class="sidebar-content">
+          <div class="sidebar-content-button-group">
+            <button id="animate">Start</button>
+            <button id="reset">Reset</button>
+          </div>
+          <div class="sidebar-content-title">
+            Gasket Properties
+          </div>
+          <div class="sidebar-content-group">
+            <label>Number of Subdivisions</label>
+            <div class="sidebar-content-range-group">
+              <input id="subdivisions" type="range" min=0 max=9 step=1 />
+              <div id="subdivisions-value">0</div>
+            </div>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Colour (Face 1)</label>
+            <input id="colour-face-1-rgb" type="color" />
+            <div class="sidebar-content-range-group">
+              <div>A</div>
+              <input id="colour-face-1-a" type="range" min=0 max=1 step=0.01 />
+              <div id="colour-face-1-a-value">0</div>
+            </div>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Colour (Face 2)</label>
+            <input id="colour-face-2-rgb" type="color" />
+            <div class="sidebar-content-range-group">
+              <div>A</div>
+              <input id="colour-face-2-a" type="range" min=0 max=1 step=0.01 />
+              <div id="colour-face-2-a-value">0</div>
+            </div>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Colour (Face 3)</label>
+            <input id="colour-face-3-rgb" type="color" />
+            <div class="sidebar-content-range-group">
+              <div>A</div>
+              <input id="colour-face-3-a" type="range" min=0 max=1 step=0.01 />
+              <div id="colour-face-3-a-value">0</div>
+            </div>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Colour (Face 4)</label>
+            <input id="colour-face-4-rgb" type="color" />
+            <div class="sidebar-content-range-group">
+              <div>A</div>
+              <input id="colour-face-4-a" type="range" min=0 max=1 step=0.01 />
+              <div id="colour-face-4-a-value">0</div>
+            </div>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Background Colour</label>
+            <input id="colour-background-rgb" type="color" />
+            <div class="sidebar-content-range-group">
+              <div>A</div>
+              <input id="colour-background-a" type="range" min=0 max=1 step=0.01 />
+              <div id="colour-background-a-value">0</div>
+            </div>
+          </div>
+          <div class="sidebar-content-title">
+            Animation Properties
+          </div>
+          <div class="sidebar-content-group">
+            <label>Number of Iterations</label>
+            <div class="sidebar-content-range-group">
+              <input id="iterations" type="range" min=1 max=10 step=1 />
+              <div id="iterations-value">0</div>
+            </div>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Speed</label>
+            <select id="speed">
+              <option value="very-slow">Very Slow</option>
+              <option value="slow">Slow</option>
+              <option value="normal">Normal</option>
+              <option value="fast">Fast</option>
+              <option value="very-fast">Very Fast</option>
+            </select>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Rotation Angle (°)</label>
+            <div class="sidebar-content-radio-group">
+              <div>
+                <input type="radio" id="rotation-x" name="rotation-axis" value="x">
+                <label for="rotation-x">X Axis</label><br>
+              </div>
+              <div>
+                <input type="radio" id="rotation-y" name="rotation-axis" value="y">
+                <label for="rotation-y">Y Axis</label>
+              </div>
+              <div>
+                <input type="radio" id="rotation-z" name="rotation-axis" value="z">
+                <label for="rotation-z">Z Axis</label>
+              </div>
+            </div>
+            <div class="sidebar-content-range-group">
+              <input id="rotation" type="range" min=-180 max=180 step=1 />
+              <div id="rotation-value">0</div>
+            </div>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Translation Magnitude</label>
+            <div class="sidebar-content-radio-group">
+              <div>
+                <input type="radio" id="translation-x" name="translation-axis" value="x">
+                <label for="translation-x">X Axis</label><br>
+              </div>
+              <div>
+                <input type="radio" id="translation-y" name="translation-axis" value="y">
+                <label for="translation-y">Y Axis</label>
+              </div>
+              <div>
+                <input type="radio" id="translation-z" name="translation-axis" value="z">
+                <label for="translation-z">Z Axis</label>
+              </div>
+            </div>
+            <div class="sidebar-content-range-group">
+              <input id="translation" type="range" min=-3 max=3 step=0.1 value=0/>
+              <div id="translation-value">0</div>
+            </div>
+          </div>
+          <div class="sidebar-content-group">
+            <label>Scaling Factor</label>
+            <div class="sidebar-content-radio-group">
+              <div>
+                <input type="radio" id="scale-x" name="scaling-axis" value="x">
+                <label for="scale-x">X Axis</label><br>
+              </div>
+              <div>
+                <input type="radio" id="scale-y" name="scaling-axis" value="y">
+                <label for="scale-y">Y Axis</label>
+              </div>
+              <div>
+                <input type="radio" id="scale-z" name="scaling-axis" value="z">
+                <label for="scale-z">Z Axis</label>
+              </div>
+            </div>
+            <div class="sidebar-content-range-group">
+              <input id="scaling" type="range" min=0 max=3.5 step=0.1 />
+              <div id="scaling-value">0</div>
+            </div>
+          </div>
         </div>
-        <div class="row"><button>Start Now</button></div>
+      </div>
+      <div id="content" class="content">
+        <canvas id="gl-canvas">
+          Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
       </div>
     </div>
+    <script type="text/javascript" src="gasket4.js"></script>
+    <script type="text/javascript" src="app.js"></script>
   </body>
 </html>
-
-<!-- attribute vec4 vPosition;
-      attribute vec4 vColor;
-      varying vec4 vColor;
-      uniform mat4 modelViewMatrix;
-
-      modelViewMatrix = mat4();
-      modelViewMatrix = mult(modelView, rotateX(thetaArray[xAxis]));
-      modelViewMatrix = mult(modelView, rotateY(thetaArray[yAxis]));
-      modelViewMatrix = mult(modelView, rotateZ(thetaArray[zAxis])); -->
-
-<!-- gl_Position = modelViewMatrix * vPosition; -->
